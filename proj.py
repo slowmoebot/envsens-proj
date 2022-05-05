@@ -3,6 +3,7 @@ import plotly.express as px
 import numpy as np
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from scipy.spatial import Delaunay
 
 px.set_mapbox_access_token(open(".mapbox_token").read())
 
@@ -149,8 +150,31 @@ def get_station_data():
 
     return res_df
 
+def spacial_interpolation(res_df):
+    
+    n_edge = 100
+
+    lon_min=res_df["lon"].min()
+    lon_max=res_df["lon"].max()
+    lat_min=res_df["lat"].min()
+    lat_max=res_df["lat"].max()
+
+    lons = np.linspace(lon_min,lon_max,101)
+    lats = np.linspace(lat_min,lat_max,101)
+
+    Lon, Lat = np.meshgrid(lons,lats)
+
+    tri = Delaunay(res_df[["lon","lat"]].to_numpy())
+
+    print(tri)
 
 def main():
+
+    # TODO
+    # RMSE
+    # change implementatio of final data frame creation to accept svd-compressed data
+    # filters maybe?
+
     res_df = get_station_data()
     fig = px.scatter_mapbox(res_df,
                             lat="lat",
@@ -160,21 +184,25 @@ def main():
                             color="full_mean"
                             )
     fig.show()
+    fig.write_image("figs/fig1.jpeg")
 
-    # print(noise_df[reg_dict[1]])
+    spacial_interpolation(res_df)
+    #print(noise_df[reg_dict[1]])
 
-    # rmse_full = np.load("vars/full_every.npy")
 
-    # for e in rmse_full:
-    #    print(e)
+    rmse_full = np.load("vars/full_every.npy")
 
-    # print(rmse_full)
-    # plt.plot(rmse_full)
-    # plt.show()
-    # save_rmse(noise_df,"full_every",1)
-    # save_rmse(noise_day_df,"day_every",1)
-    # save_rmse(noise_evening_df,"evening_every",1)
-    # save_rmse(noise_night_df,"night_every",1)
+    for e in rmse_full:
+        print(e)
+
+    print(rmse_full)
+    plt.plot(rmse_full)
+    plt.show()
+    #save_rmse(noise_df,"full_every",1)
+    #save_rmse(noise_day_df,"day_every",1)
+    #save_rmse(noise_evening_df,"evening_every",1)
+    #save_rmse(noise_night_df,"night_every",1)
+
 
 
 if __name__ == "__main__":
