@@ -157,7 +157,7 @@ def idw(x,y,z,x_test,y_test):
     X = np.concatenate((np.reshape(x_test,(-1,1)),np.reshape(y_test,(-1,1))),axis=1)
     Y = np.c_[x,y]
 
-    invD = np.power(distance_matrix(X,Y),-1)
+    invD = np.power(distance_matrix(X,Y),-3)
 
     spl = np.divide(invD @ z, invD @ np.ones_like(z))
 
@@ -211,7 +211,29 @@ def spacial_interpolation(res_df,res_var="full_mean"):
     Lon, Lat = np.meshgrid(lons,lats)
 
     Spl_idw = idw(res_df["lon"].to_numpy(), res_df["lat"].to_numpy(), res_df[res_var],Lon,Lat)
-    Spl_rbf = rbf(res_df["lon"].to_numpy(), res_df["lat"].to_numpy(), res_df[res_var],Lon,Lat)
+    #Spl_rbf = rbf(res_df["lon"].to_numpy(), res_df["lat"].to_numpy(), res_df[res_var],Lon,Lat)
+
+
+    #mapfig = go.Figure()
+
+    #mapfig.add_scattermapbox(
+    #    lon=lons[[0,-1]],
+    #    lat=lats[[0,-1]],
+    #    mode="markers"
+    #)
+    #mapfig.update_layout(
+    #    mapbox_style="open-street-map",
+    #    mapbox=dict(
+    #        accesstoken=mapbox_access_token,
+    #        zoom=11,
+    #        center={
+    #            "lat":0.5*(lats[0]+lats[-1]),
+    #            "lon":0.5*(lons[0]+lons[-1])
+    #        },
+    #    ),
+    #)
+
+    #mapfig.show()
 
     fig = go.Figure()
     
@@ -232,18 +254,17 @@ def spacial_interpolation(res_df,res_var="full_mean"):
         ),
     )
     """
-
     
     fig.add_contour(
         x=lons,
         y=lats,
-        z=Spl_rbf,
-        opacity=1,
-        contours=dict(
-            start=res_df[res_var].min(),
-            end=res_df[res_var].max(),
-            size=2,
-        )
+        z=Spl_idw,
+        opacity=0.5,
+        #contours=dict(
+        #    start=np.ceil(res_df[res_var].min()),
+        #    end=np.floor(res_df[res_var].max()),
+        #    size=1,
+        #)
     )
     
     fig.add_scatter(
@@ -252,6 +273,23 @@ def spacial_interpolation(res_df,res_var="full_mean"):
         mode="markers"
     )
     
+    fig.add_layout_image(
+        dict(
+            source="https://raw.githubusercontent.com/slowmoebot/envsens-proj/main/figs/hacky-background.png",
+            xref="x",
+            yref="y",
+            x=lons[0],
+            y=lats[-1],
+            sizex=lons[-1]-lons[0],
+            sizey=lats[-1]-lats[0],
+            sizing="stretch",
+            opacity=1,
+            layer="below")
+    )
+
+    fig.update_layout(
+        template='simple_white'
+    )
     fig.show()
 
 
