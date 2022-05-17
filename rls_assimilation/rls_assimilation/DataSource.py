@@ -162,11 +162,11 @@ class DataSource:
         if not self.ar_model:
             if np.isnan(x_past):
                 return 0
-            else:
-                return x_past
+            #else:
+            #    return x_past
 
-        #if not self.ar_model:
-        #    self.ar_model = RLS()
+        if not self.ar_model:
+            self.ar_model = RLS()
 
         return self.ar_model.predict(x_past)
 
@@ -183,23 +183,25 @@ class DataSource:
 
         # Run AR(1) estimation
         x_past = self.x_corr_all[-1] if t > 1 else np.nan
-        if np.isnan(x_new):
-            x_corr = self.impute(x_past)  # impute (predict) if missing
-        else:
-            x_corr = x_new
-            if not np.isnan(x_past):
-                if not self.ar_model:
-                    self.ar_model = RLS()  # initialise when data gets available
-                
-                self.ar_model.update(x_past, x_corr)
-        #x_corr = self.impute(x_past)
+        # if np.isnan(x_new):
+        #     x_corr = self.impute(x_past)  # impute (predict) if missing
+        # else:
+        #     x_corr = x_new
+        #     if not np.isnan(x_past):
+        #         if not self.ar_model:
+        #             self.ar_model = RLS()  # initialise when data gets available
+        #         
+        #         self.ar_model.update(x_past, x_corr)
+
+
+        x_corr = self.impute(x_past)
         #print(f"{x_past}, {x_corr}\n")
 
-        #if not self.ar_model:
-        #    self.ar_model = RLS()
+        if not self.ar_model:
+            self.ar_model = RLS()
         
-        #if not np.isnan(x_new):
-        #    self.ar_model.update(x_corr,x_new)
+        if not np.isnan(x_new):
+            self.ar_model.update(x_corr,x_new)
 
         # obtain error of the AR(1) model
         err = self.ar_model.error if self.ar_model else 0
