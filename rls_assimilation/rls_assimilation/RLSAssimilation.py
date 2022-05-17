@@ -121,7 +121,9 @@ class RLSAssimilation:
         """
 
         # Step 1: Pre-process observations and estimate AR(1) errors
+        #print("Source 1:")
         source1_obs, err_source1 = self.source1.estimate(obs1)
+        #print("Source 2:")
         source2_obs, err_source2 = self.source2.estimate(obs2)
 
         #print(self.source1.dx_all)
@@ -140,7 +142,6 @@ class RLSAssimilation:
         # Step 3: Assimilation
         try:
             k = (err_source2**2) / (err_source1**2 + err_source2**2)
-
         except ZeroDivisionError:
             k = 1
 

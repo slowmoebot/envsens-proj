@@ -29,13 +29,13 @@ def print_metrics(
     s2[np.isnan(s2)] = 0
 
     # Root Mean Squared Errors
-    print(f"RMSE (Station and Model): {get_rmse(s1, s2)}")
+    #print(f"RMSE (Station and Model): {get_rmse(s1, s2)}")
     print(f"RMSE (Station and {scenario}): {get_rmse(s1, assimilated)}")
-    print(f"RMSE (Model and {scenario}): {get_rmse(s2, assimilated)}")
+    #print(f"RMSE (Model and {scenario}): {get_rmse(s2, assimilated)}")
 
     # Mean Absolute Uncertainties
-    print(f"MAU (Station): {np.mean(np.abs(err1_ar)).round(2)}")
-    print(f"MAU (Model): {np.mean(np.abs(err2_ar)).round(2)}")
+    #print(f"MAU (Station): {np.mean(np.abs(err1_ar)).round(2)}")
+    #print(f"MAU (Model): {np.mean(np.abs(err2_ar)).round(2)}")
 
     if scenario == "DA3 (Model -> Station)":
         print(f"MAU (Model calibrated): {np.mean(np.abs(err_r)).round(2)}")

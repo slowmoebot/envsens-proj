@@ -299,6 +299,7 @@ def spacial_interpolation(res_df,res_var="full_mean"):
 
 def main():
 
+
     """
     res_df = get_station_data()
     fig = px.scatter_mapbox(res_df,
@@ -314,11 +315,23 @@ def main():
 
     noise_df, pos_df = read_dfs()
 
-    res_df = get_station_data(noise_df)
+    #res_df = get_station_data(noise_df)
 
-    spacial_interpolation(res_df)
+    #spacial_interpolation(res_df)
 
 
+    
+    rmse=np.load("vars/full_every.npy")
+    rmsen=np.load("vars/night_every.npy")
+    rmsed=np.load("vars/day_every.npy")
+    rmsee=np.load("vars/evening_every.npy")
+    for i,val in enumerate(rmse):
+        print(i,val)
+    plt.plot(rmse)
+    plt.plot(rmsen)
+    plt.plot(rmsed)
+    plt.plot(rmsee)
+    plt.show()
 
 if __name__ == "__main__":
     main()
